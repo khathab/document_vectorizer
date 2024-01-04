@@ -13,7 +13,7 @@ class Image(BaseModel):
     embedding_text: Embedding
 
 # represents a small group of text. ie few sentences
-class Text(BaseModel):
+class Chunk(BaseModel):
     document: str
     page: int
     text: str
@@ -23,5 +23,5 @@ class Text(BaseModel):
 class TextGroup(BaseModel):
     document: str
     page: int
-    texts: List[Text]
+    texts: List[Chunk]
     embedding_texts: Embedding
