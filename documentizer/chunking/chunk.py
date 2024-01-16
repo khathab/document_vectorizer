@@ -26,7 +26,7 @@ class Chunker:
         text = ''
         for page in pdf.pages:
             text += page.extract_text()
-        return text
+        return text        
 
     def chunk_evenly(self, path):
         pdf = pypdf.PdfReader(path)
@@ -37,15 +37,13 @@ class Chunker:
             date = datetime.strptime(date, '%Y%m%d%H%M%S')
         else:
             date = datetime.utcnow()
+
         document = Document(date_created=date)
         chunks = []
         chunks.append(Chunk(document_id=document.document_id,text='Document Start', page_number=1))
         for page_number, page in enumerate(pdf.pages, start=1):
-            # for image in page.images:
-            #     with open(f'{image.name}', 'wb') as file:
-            #         file.write(image.data)
-
             page_text = page.extract_text()
+            page_text = page.split(' ')
             # doubly link previous and next chunks
             for i in range(0, len(page_text), self.chunk_size):
                 text = page_text[i:i+self.chunk_size]

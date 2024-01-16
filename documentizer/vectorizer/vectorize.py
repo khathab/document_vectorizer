@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from openai import OpenAI
-from torch import mode
 from documentizer.types import Chunk, Document
 from typing import Union, List
 

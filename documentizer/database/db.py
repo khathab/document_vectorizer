@@ -1,6 +1,4 @@
-import re
 import pymongo
-from pymongo.errors import ConnectionFailure
 import os
 from typing import List, Union
 from ..types import Document, Chunk, Image
@@ -50,12 +48,12 @@ class Database:
     def add_documents(self, documents: List[Union[Chunk, Document, Image]]):
         self.documents.insert_many(documents=[doc.model_dump() for doc in documents])
 
-    def search_document(self, vector, type):
-        pipeline = self.generate_pipeline(vector, type)
+    def search_document(self, vector):
+        pipeline = self.generate_pipeline(vector)
         results = self.documents.aggregate(pipeline)
-        return next(results)
+        return results
     
-    def generate_pipeline(self,vector, type):
+    def generate_pipeline(self,vector):
         # define pipeline
         pipeline = [
             {
