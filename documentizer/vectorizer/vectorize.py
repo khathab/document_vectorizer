@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
+import cohere
 from torch import mode
 from documentizer.types import Chunk, Document
 from typing import Union, List
@@ -12,16 +12,14 @@ class Vectorizer:
 
     def __init__(self) -> None:
         load_dotenv()
-        OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-        self.client = OpenAI(api_key=OPENAI_API_KEY)
+        COHERE_API_KEY = os.environ.get('COHERE_API_KEY')
+        self.client = cohere.Client(api_key=COHERE_API_KEY)
 
     def generate_vector(self, search_text):
-        embedding = self.client.embeddings.create(input=search_text, model='text-embedding-ada-002')
-        return embedding.data[0].embedding
-    
-    # could improve in parallel
+        return self.client.embed([search_text], 'embed-english-v3.0', input_type='search_query').embeddings[0]
+
     def generate_embedding(self, chunks: List[Union[Chunk, Document]]):
-        embedding = self.client.embeddings.create(input=[chunk.text for chunk in chunks], model='text-embedding-ada-002')
-        for chunk, embedding in zip(chunks, embedding.data):
-            chunk.embedding = embedding.embedding
+        embeddings = self.client.embed([chunk.text for chunk in chunks],'embed-english-v3.0', input_type='search_document')
+        for chunk, embedding in zip(chunks, embeddings):
+            chunk.embedding = embedding
         return chunks
