@@ -1,10 +1,34 @@
 # Document Vectorizer
 
-This application produces useful embeddings for retrieval augmented generation.
+An easy RAG tool using MongoDB
 
-Features:
-* Chunking Documents
-* Storing Documents
-* Storing Documents
+Search Over your documents using mongodb.
 
-# TODO: Add vector index setup
+
+# Setup:
+
+# Venv
+
+# Replace API Keys
+
+# Setup MongoDB Vector Search
+
+![ALT Mongodb](./static/Picture2.png)
+
+`{
+  "fields": [
+    {
+      "numDimensions": 1024,
+      "path": "embedding",
+      "similarity": "cosine",
+      "type": "vector"
+    },
+    {
+      "path": "type",
+      "type": "filter"
+    }
+  ]
+}`
+
+# Add Documents
+

@@ -1,6 +1,10 @@
 import os
 import re
 import pymongo
+import os
+from typing import List, Union
+from ..types import Document, Chunk, Image
+from dotenv import load_dotenv
 import requests
 from dotenv import load_dotenv
 from typing import List, Union
@@ -24,48 +28,20 @@ class Database:
         except Exception as e:
             print(f"Error connecting to MongoDB: {e}")
 
-    def setup_atlas_vector_search(self):
-        url = f'https://cloud.mongodb.com/api/atlas/v2/groups/{self.project_id}/clusters/{self.cluster_name}/fts/indexes'
-        index_config = {
-            "collectionName": 'documents',
-            "database": self.database_name,
-            "name": "documentSearch",
-            "type": "vectorSearch",
-            "fields": [
-                {
-                    "numDimensions": 1024,
-                    "path": "embedding",
-                    "similarity": "cosine",
-                    "type": "vector"
-                },
-                {
-                    "path": "type",
-                    "type": "filter"
-                },
-            ]
-        }
-        headers = {'Content-Type': 'application/json'}
-        # Add authentication if required
-        response = requests.post(url=url, json=index_config, headers=headers)
-        if response.status_code == 200:
-            print("Vector search index created successfully.")
-        else:
-            print(f"Error creating index: {response.json()}")
-
     def add_documents(self, documents: List[Union[Chunk, Document, Image]]):
-        # Ensure that documents have a method named 'model_dump'
         self.documents.insert_many(documents=[doc.model_dump() for doc in documents])
 
-    def search_document(self, vector, type):
+
+    def search_document(self, vector):
         try:
-            pipeline = self.generate_pipeline(vector, type)
+            pipeline = self.generate_pipeline(vector)
             results = self.documents.aggregate(pipeline)
-            return next(results, None)
+            return results
         except Exception as e:
             print(f"Error in search: {e}")
             return None
     
-    def generate_pipeline(self,vector, type):
+    def generate_pipeline(self,vector):
         # define pipeline
         pipeline = [
             {

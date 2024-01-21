@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 import cohere
-from torch import mode
 from documentizer.types import Chunk, Document
 from typing import Union, List
 
